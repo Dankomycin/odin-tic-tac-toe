@@ -1,0 +1,27 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: teal;
+    color: white;
+}
+
+.markers {
+    display: flex;
+    justify-content:space-around;
+    margin: 16px;
+}
+
+button {
+    height: 2em;
+    width: 2em;
+    font-size: 60px;
+    font-weight: 700;
+    border: 10px solid white;
+    border-radius: 10%;
+    background-color: teal;
+    color: white;
+}
