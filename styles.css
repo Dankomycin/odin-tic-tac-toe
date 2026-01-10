@@ -22,6 +22,34 @@ button {
     font-weight: 700;
     border: 10px solid white;
     border-radius: 10%;
-    background-color: teal;
     color: white;
+    background-color: teal;
 }
+
+button > div {
+    border-radius: 10%;
+    background-color: teal;
+    height: 100%;
+    width: 100%;
+    padding-top: .25em;
+}
+
+.gameboard {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    max-width: 360px;
+}
+
+.textarea {
+    display: flex;
+    justify-content: center;
+    padding: 4em;
+}
+
+
+
