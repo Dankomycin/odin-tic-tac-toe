@@ -76,42 +76,52 @@
         const game = gameController();
 
         //cache DOM
+        const startButton = document.querySelector(".start");
         const tileGrid = document.querySelector(".gameboard");
         const textArea = document.querySelector(".textarea");
 
+        //button functions
+        function clickHandler(e) {
+            if (e.target.textContent === "") {
+                const index = e.target.dataset.index;
+                game.playRound(index);
+                updateScreen();
+            }
+        }
+
+        function initializeGame() {
+            game.startGame();
+            updateScreen();
+        }startButton.addEventListener("click", initializeGame)
+
+
+        //render screen
         function updateScreen() {
             tileGrid.innerHTML = "";
             const board = gameboard.getBoard()
             const activePlayer = game.getActivePlayer();
-            textArea.textContent = `It is ${activePlayer.name}'s turn`
+            const gameState = game.checkWin();
+
+            if (gameState === 0) {
+                textArea.textContent = `It is ${activePlayer.name}'s turn`
+            }else if (gameState === 1) {
+                textArea.textContent = `The game is tied!`;
+            }else if (gameState === 2) {
+                textArea.textContent = `${activePlayer.name} has won the game!`
+            }
+
             board.forEach((value,index) => {
                 const tile = document.createElement("button");
                 tile.classList.add("tile");
                 tile.textContent = value;
-                tile.dataset.marker = value;
-                tile.addEventListener("click", function clickHandler(e) {
-                    if (!e.target.dataset.marker) {
-                        game.playRound(index);
-                        updateScreen();
-                    }})
-                tileGrid.appendChild(tile);
-                })
-            if (!game.checkWin() == 0){
-                if (game.checkWin() == 1){
-                    textArea.textContent = `The game is tied!`
-                    return
-                }if (game.checkWin() == 2){
-                    textArea.textContent = `${activePlayer.name} has won the game!`
-                    return
+                tile.dataset.index = index;
+                if (gameState === 0){
+                    tile.addEventListener("click", clickHandler);
                 }
-            }
-            console.log(game.checkWin())
+                tileGrid.appendChild(tile);
+            });
         }
         
-        //Init game   
-        game.startGame();
-        updateScreen();
-            
 
     })();
 

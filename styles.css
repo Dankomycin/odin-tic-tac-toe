@@ -9,10 +9,18 @@ body {
     color: white;
 }
 
-.markers {
+.start-container {
     display: flex;
     justify-content:space-around;
     margin: 16px;
+}
+
+.start-container > button {
+    width: auto;
+    height: auto;
+    border-radius: 16px;
+    padding: 16px;
+    font-size: 32px;
 }
 
 button {
