@@ -14,7 +14,11 @@
                 board[index] = marker;
             }};
 
-        return {createBoard, getBoard, placeMarker};
+        const clearBoard = () => {
+            board.length = 0;
+        }
+
+        return {createBoard, getBoard, placeMarker, clearBoard};
     })();
 
     const players = (function() {
@@ -30,6 +34,7 @@
             const newPlayer = new Player(name, marker);
             list.push(newPlayer);
         };
+
         return {getPlayerList, createPlayer}
     })();
 
@@ -55,9 +60,38 @@
             activePlayer = activePlayer === players.getPlayerList()[0] ? players.getPlayerList()[1] : players.getPlayerList()[0];
             console.log(`It is ${activePlayer.name}'s turn.`);
         };
+
+        const playerNameSelection = (callback) => {
+            //cache DOM
+            const player1Dialog = document.getElementById("player1-dialog");
+            const player2Dialog = document.getElementById("player2-dialog");
+            const player1Form = document.getElementById("player1-name");
+            const player2Form = document.getElementById("player2-name");
+
+            // Clear prior
+            //Player 1 creation
+            player1Dialog.showModal();
+            player1Form.addEventListener('submit', function (e){
+                e.preventDefault();
+                const playerData = new FormData(player1Form);
+                const playerName = playerData.get('name');
+                players.createPlayer(playerName, "X");
+                player1Dialog.close()
+                player2Dialog.showModal();    
+            }, {once: true})
+            
+            //Player 2 creation
+            player2Form.addEventListener('submit', function (e){
+                e.preventDefault();
+                const playerData = new FormData(player2Form);
+                const playerName = playerData.get('name');
+                players.createPlayer(playerName, "O");
+                player2Dialog.close();
+                if (callback){callback()}
+            },{once: true});
+        }
+
         const startGame = () => {
-            players.createPlayer("Player 1", "X");
-            players.createPlayer("Player 2", "O");
             activePlayer = players.getPlayerList()[0];
             gameboard.createBoard();
             console.log(`The gameboard is set!`);
@@ -69,7 +103,7 @@
                 return;
             }switchPlayer();
         };
-        return {playRound, getActivePlayer, startGame, checkWin};
+        return {playRound, getActivePlayer, startGame, checkWin, playerNameSelection};
         };
 
     const ScreenController = (function() {
@@ -90,11 +124,20 @@
         }
 
         function initializeGame() {
+            game.playerNameSelection(() => {
+                game.startGame();
+                updateScreen();
+                startButton.removeEventListener("click", initializeGame);
+            });
+        }
+        startButton.addEventListener("click", initializeGame)
+
+        function restartGame() {
+            gameboard.clearBoard();
             game.startGame();
             updateScreen();
-        }startButton.addEventListener("click", initializeGame)
-
-
+        }
+        
         //render screen
         function updateScreen() {
             tileGrid.innerHTML = "";
@@ -108,6 +151,8 @@
                 textArea.textContent = `The game is tied!`;
             }else if (gameState === 2) {
                 textArea.textContent = `${activePlayer.name} has won the game!`
+                startButton.textContent = "Restart Game"
+                startButton.addEventListener("click", restartGame, {once: true})
             }
 
             board.forEach((value,index) => {
